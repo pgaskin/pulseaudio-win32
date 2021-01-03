@@ -1,0 +1,53 @@
+From 6d266315f994b71657bf91393334b16accaf5275 Mon Sep 17 00:00:00 2001
+From: Patrick Gaskin <patrick@pgaskin.net>
+Date: Thu, 31 Dec 2020 06:38:28 -0500
+Subject: [PATCH] client-conf: Enable auto-connect-localhost by default
+
+---
+ man/pulse-client.conf.5.xml.in | 4 +---
+ src/pulse/client-conf.c        | 2 +-
+ src/pulse/client.conf.in       | 2 +-
+ 3 files changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/man/pulse-client.conf.5.xml.in b/man/pulse-client.conf.5.xml.in
+index 5c0eff31b..0eadac228 100644
+--- a/man/pulse-client.conf.5.xml.in
++++ b/man/pulse-client.conf.5.xml.in
+@@ -137,9 +137,7 @@ License along with PulseAudio; if not, see <http://www.gnu.org/licenses/>.
+       connect to localhost via IP. Enabling this is a potential
+       security hole since connections are only authenticated one-way
+       and a rogue server might hence fool a client into sending it its
+-      private (e.g. VoIP call) data. This was enabled by default on
+-      PulseAudio version 0.9.21 and older. Defaults to
+-      <opt>no</opt>.</p>
++      private (e.g. VoIP call) data. Defaults to <opt>yes</opt>.</p>
+     </option>
+ 
+     <option>
+diff --git a/src/pulse/client-conf.c b/src/pulse/client-conf.c
+index 1daaf9111..1fb008eec 100644
+--- a/src/pulse/client-conf.c
++++ b/src/pulse/client-conf.c
+@@ -67,7 +67,7 @@ static const pa_client_conf default_conf = {
+     .disable_shm = false,
+     .disable_memfd = false,
+     .shm_size = 0,
+-    .auto_connect_localhost = false,
++    .auto_connect_localhost = true,
+     .auto_connect_display = false
+ };
+ 
+diff --git a/src/pulse/client.conf.in b/src/pulse/client.conf.in
+index 26b7790aa..ee85808d1 100644
+--- a/src/pulse/client.conf.in
++++ b/src/pulse/client.conf.in
+@@ -31,5 +31,5 @@
+ ; enable-shm = yes
+ ; shm-size-bytes = 0 # setting this 0 will use the system-default, usually 64 MiB
+ 
+-; auto-connect-localhost = no
++; auto-connect-localhost = yes
+ ; auto-connect-display = no
+-- 
+2.29.2
+

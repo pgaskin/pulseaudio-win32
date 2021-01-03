@@ -1,0 +1,147 @@
+From ccd7100bad6d699b6fdf8e70edbe58e90c71927b Mon Sep 17 00:00:00 2001
+From: Patrick Gaskin <patrick@pgaskin.net>
+Date: Fri, 1 Jan 2021 10:06:44 -0500
+Subject: [PATCH] win32: Fix WSAStartup issues
+
+WSAStartup was not being called for pacat and pactl built with meson,
+causing them to fail in pa_mainloop_new with "cannot create wakeup
+pipe". This issue also affects other applications linking to libpulse
+other than the pulseaudio daemon, which calls WSAStartup itself.
+
+When built with autotools, WSAStartup would have been called in
+DllMain, which is recommended against by the documentation [1].
+
+To fix these issues, the WSAStartup/WSACleanup calls can be moved
+into pa_mainloop_new/pa_mainloop_free.
+
+[1] https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-wsastartup
+---
+ src/Makefile.am         |  4 ----
+ src/pulse/mainloop.c    | 21 ++++++++++++++++
+ src/pulsecore/dllmain.c | 53 -----------------------------------------
+ 3 files changed, 21 insertions(+), 57 deletions(-)
+ delete mode 100644 src/pulsecore/dllmain.c
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 97c9dce9f..7fb328ac0 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -842,10 +842,6 @@ libpulsecommon_@PA_MAJORMINOR@_la_CFLAGS += $(LIBASYNCNS_CFLAGS)
+ libpulsecommon_@PA_MAJORMINOR@_la_LIBADD += $(LIBASYNCNS_LIBS)
+ endif
+ 
+-if OS_IS_WIN32
+-libpulsecommon_@PA_MAJORMINOR@_la_SOURCES += pulsecore/dllmain.c
+-endif
+-
+ if HAVE_DBUS
+ libpulsecommon_@PA_MAJORMINOR@_la_SOURCES += \
+ 		pulsecore/dbus-util.c pulsecore/dbus-util.h \
+diff --git a/src/pulse/mainloop.c b/src/pulse/mainloop.c
+index 355935e09..90112f589 100644
+--- a/src/pulse/mainloop.c
++++ b/src/pulse/mainloop.c
+@@ -32,6 +32,10 @@
+ #include <pulsecore/pipe.h>
+ #endif
+ 
++#ifdef OS_IS_WIN32
++#include <winsock2.h>
++#endif
++
+ #include <pulse/rtclock.h>
+ #include <pulse/timeval.h>
+ #include <pulse/xmalloc.h>
+@@ -450,6 +454,17 @@ static const pa_mainloop_api vtable = {
+ pa_mainloop *pa_mainloop_new(void) {
+     pa_mainloop *m;
+ 
++#ifdef OS_IS_WIN32
++    {
++        int r;
++        WSADATA data;
++        if ((r = WSAStartup(MAKEWORD(2, 0), &data))) {
++            pa_log_error("ERROR: cannot initialize Winsock2 (%d)", r);
++            return NULL;
++        }
++    }
++#endif
++
+     pa_init_i18n();
+ 
+     m = pa_xnew0(pa_mainloop, 1);
+@@ -579,6 +594,12 @@ void pa_mainloop_free(pa_mainloop *m) {
+     pa_close_pipe(m->wakeup_pipe);
+ 
+     pa_xfree(m);
++
++#ifdef OS_IS_WIN32
++    {
++        WSACleanup();
++    }
++#endif
+ }
+ 
+ static void scan_dead(pa_mainloop *m) {
+diff --git a/src/pulsecore/dllmain.c b/src/pulsecore/dllmain.c
+deleted file mode 100644
+index e594ae5ac..000000000
+--- a/src/pulsecore/dllmain.c
++++ /dev/null
+@@ -1,53 +0,0 @@
+-/***
+-  This file is part of PulseAudio.
+-
+-  Copyright 2006 Pierre Ossman <ossman@cendio.se> for Cendio AB
+-
+-  PulseAudio is free software; you can redistribute it and/or modify
+-  it under the terms of the GNU Lesser General Public License as published
+-  by the Free Software Foundation; either version 2.1 of the License,
+-  or (at your option) any later version.
+-
+-  PulseAudio is distributed in the hope that it will be useful, but
+-  WITHOUT ANY WARRANTY; without even the implied warranty of
+-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+-  General Public License for more details.
+-
+-  You should have received a copy of the GNU Lesser General Public License
+-  along with PulseAudio; if not, see <http://www.gnu.org/licenses/>.
+-***/
+-
+-#ifdef HAVE_CONFIG_H
+-#include <config.h>
+-#endif
+-
+-#ifdef OS_IS_WIN32
+-
+-#include <stdlib.h>
+-#include <stdio.h>
+-
+-#include <windows.h>
+-#include <winsock2.h>
+-
+-extern char *pa_win32_get_toplevel(HANDLE handle);
+-
+-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+-    WSADATA data;
+-
+-    switch (fdwReason) {
+-
+-    case DLL_PROCESS_ATTACH:
+-        if (!pa_win32_get_toplevel(hinstDLL))
+-            return FALSE;
+-        WSAStartup(MAKEWORD(2, 0), &data);
+-        break;
+-
+-    case DLL_PROCESS_DETACH:
+-        WSACleanup();
+-        break;
+-
+-    }
+-    return TRUE;
+-}
+-
+-#endif /* OS_IS_WIN32 */
+-- 
+2.29.2
+

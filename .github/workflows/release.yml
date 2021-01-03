@@ -1,0 +1,50 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Build
+        run: |
+          mkdir -p ./build &&
+          docker build --tag pulseaudio-win32 --build-arg "PAW32_VERSION=$(echo "$(git describe --always --tags)" | sed -e "s/^v//g")" ./src &&
+          docker save pulseaudio-win32 |
+          tar -xOf - --wildcards '*/layer.tar' |
+          tar -xvf - -C ./build
+      - name: Release
+        id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          tag_name: ${{github.ref}}
+          release_name: ${{github.ref}}
+          draft: true
+          prerelease: false
+      - name: Release (pasetup.exe)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          upload_url: ${{steps.release.outputs.upload_url}}
+          asset_name: pasetup.exe
+          asset_path: build/pasetup.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
+      - name: Release (pulseaudio.zip)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          upload_url: ${{steps.release.outputs.upload_url}}
+          asset_name: pulseaudio.zip
+          asset_path: build/pulseaudio.zip
+          asset_content_type: application/zip

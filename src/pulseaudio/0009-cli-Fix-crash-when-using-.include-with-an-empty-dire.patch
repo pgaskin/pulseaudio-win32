@@ -1,0 +1,75 @@
+From 5e02eaa8a34bab85ce694535eae050f4858b5f40 Mon Sep 17 00:00:00 2001
+From: Patrick Gaskin <patrick@pgaskin.net>
+Date: Sat, 2 Jan 2021 14:04:42 -0500
+Subject: [PATCH] cli: Fix crash when using .include with an empty directory
+
+This would previously fail the size > 0 assertion in pa_xmalloc.
+---
+ src/pulsecore/cli-command.c | 46 ++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
+
+diff --git a/src/pulsecore/cli-command.c b/src/pulsecore/cli-command.c
+index c5a21ed93..5dc2ac6b9 100644
+--- a/src/pulsecore/cli-command.c
++++ b/src/pulsecore/cli-command.c
+@@ -2118,34 +2118,34 @@ int pa_cli_command_execute_line_stateful(pa_core *c, const char *s, pa_strbuf *b
+                             }
+ 
+                             closedir(d);
+-
+-                            count = pa_dynarray_size(files);
+-                            sorted_files = pa_xnew(char*, count);
+-                            for (i = 0; i < count; ++i)
+-                                sorted_files[i] = pa_dynarray_get(files, i);
+-                            pa_dynarray_free(files);
+-
+-                            for (i = 0; i < count; ++i) {
+-                                for (unsigned j = 0; j < count; ++j) {
+-                                    if (strcmp(sorted_files[i], sorted_files[j]) < 0) {
+-                                        char *tmp = sorted_files[i];
+-                                        sorted_files[i] = sorted_files[j];
+-                                        sorted_files[j] = tmp;
++                            if ((count = pa_dynarray_size(files))) {
++                                sorted_files = pa_xnew(char*, count);
++                                for (i = 0; i < count; ++i)
++                                    sorted_files[i] = pa_dynarray_get(files, i);
++                                pa_dynarray_free(files);
++
++                                for (i = 0; i < count; ++i) {
++                                    for (unsigned j = 0; j < count; ++j) {
++                                        if (strcmp(sorted_files[i], sorted_files[j]) < 0) {
++                                            char *tmp = sorted_files[i];
++                                            sorted_files[i] = sorted_files[j];
++                                            sorted_files[j] = tmp;
++                                        }
+                                     }
+                                 }
+-                            }
+ 
+-                            for (i = 0; i < count; ++i) {
+-                                if (!failed) {
+-                                    if (pa_cli_command_execute_file(c, sorted_files[i], buf, fail) < 0 && *fail)
+-                                        failed = true;
+-                                }
++                                for (i = 0; i < count; ++i) {
++                                    if (!failed) {
++                                        if (pa_cli_command_execute_file(c, sorted_files[i], buf, fail) < 0 && *fail)
++                                            failed = true;
++                                    }
+ 
+-                                pa_xfree(sorted_files[i]);
++                                    pa_xfree(sorted_files[i]);
++                                }
++                                pa_xfree(sorted_files);
++                                if (failed)
++                                    return -1;
+                             }
+-                            pa_xfree(sorted_files);
+-                            if (failed)
+-                                return -1;
+                         }
+                     } else if (pa_cli_command_execute_file(c, filename, buf, fail) < 0 && *fail) {
+                         return -1;
+-- 
+2.29.2
+

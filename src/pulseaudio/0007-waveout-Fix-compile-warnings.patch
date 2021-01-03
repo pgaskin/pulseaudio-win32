@@ -1,0 +1,44 @@
+From 0f29f481972d9dc2087279b34df945743cf4df0a Mon Sep 17 00:00:00 2001
+From: Patrick Gaskin <patrick@pgaskin.net>
+Date: Thu, 31 Dec 2020 22:06:03 -0500
+Subject: [PATCH] waveout: Fix compile warnings
+
+* Include pulse/util.h for pa_thread_make_realtime.
+* Explicitly cast HWAVEOUT to UINT_PTR for waveOutGetDevCaps.
+---
+ src/modules/module-waveout.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/modules/module-waveout.c b/src/modules/module-waveout.c
+index f7ffdf754..5bde6a9cb 100644
+--- a/src/modules/module-waveout.c
++++ b/src/modules/module-waveout.c
+@@ -28,6 +28,7 @@
+ 
+ #include <pulse/xmalloc.h>
+ #include <pulse/timeval.h>
++#include <pulse/util.h>
+ 
+ #include <pulsecore/sink.h>
+ #include <pulsecore/source.h>
+@@ -412,7 +413,7 @@ static void sink_get_volume_cb(pa_sink *s) {
+     DWORD vol;
+     pa_volume_t left, right;
+ 
+-    if (waveOutGetDevCaps(u->hwo, &caps, sizeof(caps)) != MMSYSERR_NOERROR)
++    if (waveOutGetDevCaps((UINT_PTR) u->hwo, &caps, sizeof(caps)) != MMSYSERR_NOERROR)
+         return;
+     if (!(caps.dwSupport & WAVECAPS_VOLUME))
+         return;
+@@ -440,7 +441,7 @@ static void sink_set_volume_cb(pa_sink *s) {
+     WAVEOUTCAPS caps;
+     DWORD vol;
+ 
+-    if (waveOutGetDevCaps(u->hwo, &caps, sizeof(caps)) != MMSYSERR_NOERROR)
++    if (waveOutGetDevCaps((UINT_PTR) u->hwo, &caps, sizeof(caps)) != MMSYSERR_NOERROR)
+         return;
+     if (!(caps.dwSupport & WAVECAPS_VOLUME))
+         return;
+-- 
+2.29.2
+

@@ -1,0 +1,56 @@
+From 458090d3320859fe671bbf0413294d681087149e Mon Sep 17 00:00:00 2001
+From: Patrick Gaskin <patrick@pgaskin.net>
+Date: Thu, 31 Dec 2020 20:43:42 -0500
+Subject: [PATCH] system.pa: Tweaks for custom build
+
+---
+ src/daemon/default.pa.in | 2 +-
+ src/daemon/system.pa.in  | 8 ++++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/src/daemon/default.pa.in b/src/daemon/default.pa.in
+index 3468a89b9..b6a127032 100755
+--- a/src/daemon/default.pa.in
++++ b/src/daemon/default.pa.in
+@@ -45,7 +45,7 @@ ifelse(@HAVE_OSS_OUTPUT@, 1, [dnl
+ #load-module module-oss-mmap device="/dev/dsp" sink_name=output source_name=input
+ ])dnl
+ ifelse(@HAVE_WAVEOUT@, 1, [dnl
+-load-module module-waveout sink_name=output source_name=input
++load-module module-waveout sink_name=waveout source_name=wavein
+ ])dnl
+ #load-module module-null-sink
+ ifelse(@HAVE_MKFIFO@, 1, [dnl
+diff --git a/src/daemon/system.pa.in b/src/daemon/system.pa.in
+index 1470e2368..91d0a814a 100755
+--- a/src/daemon/system.pa.in
++++ b/src/daemon/system.pa.in
+@@ -24,6 +24,11 @@ load-module module-device-restore
+ load-module module-stream-restore
+ load-module module-card-restore
+ 
++### Load audio drivers statically
++ifelse(@HAVE_WAVEOUT@, 1, [dnl
++load-module module-waveout sink_name=waveout source_name=wavein
++])dnl
++
+ ### Automatically load driver modules depending on the hardware available
+ ifelse(@HAVE_UDEV@, 1, [dnl
+ .ifexists module-udev-detect@PA_SOEXT@
+@@ -41,10 +46,13 @@ load-module module-detect
+ .endif
+ 
+ ### Load several protocols
++ifelse(@HAVE_AF_UNIX@, 1, [dnl
+ .ifexists module-esound-protocol-unix@PA_SOEXT@
+ load-module module-esound-protocol-unix
+ .endif
+ load-module module-native-protocol-unix
++])dnl
++load-module module-native-protocol-tcp auth-anonymous=1
+ 
+ ### Automatically restore the default sink/source when changed by the user
+ ### during runtime
+-- 
+2.29.2
+
