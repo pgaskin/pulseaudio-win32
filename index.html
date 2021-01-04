@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>PulseAudio Builds for Windows</title>
+    <meta name="description" content="Download up-to-date PulseAudio binaries for Windows. An optional installer is included for automatically starting a system-wide instance accessible over TCP.">
+    <meta name="author" content="Patrick Gaskin"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet"/>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            font-size: 16px;
+        }
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            font-size: 1rem;
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+        header#main-header {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: space-between;
+            min-height: 100vh;
+            position: relative;
+            padding: .75rem 1.5rem;
+            background: #eee;
+            color: #000;
+        }
+        header#main-header > * {
+            flex: 0 0 auto;
+        }
+        header#main-header > section {
+            display: block;
+            flex: 0 0 auto;
+            font-size: 1.1em;
+            padding: .75rem;
+        }
+        header#main-header > section h1 {
+            font-size: 2em;
+            margin: 0 0 .5rem 0;
+        }
+        header#main-header > section p {
+            margin: 0 0 1rem 0;
+        }
+        header#main-header::after {
+            display: block;
+            flex: 0 0 30vh;
+            content: ' '
+        }
+        nav#main-nav {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+        nav#main-nav > div {
+            flex: 0 0 auto;
+            padding: .75rem 0;
+        }
+        nav#main-nav > div > a {
+            margin: .75rem;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+        }
+        nav#main-nav > div > a:link,
+        nav#main-nav > div > a:visited {
+            border-bottom-color: #aaa;
+            outline: 0;
+        }
+        nav#main-nav > div > a:link:hover,
+        nav#main-nav > div > a:visited:hover,
+        nav#main-nav > div > a:link:active,
+        nav#main-nav > div > a:link:focus,
+        nav#main-nav > div > a:visited:active,
+        nav#main-nav > div > a:visited:focus {
+            color: #000;
+        }
+        nav#main-nav > div > a:link:hover,
+        nav#main-nav > div > a:visited:hover {
+            border-bottom-color: #000;
+        }
+        main#main-content {
+            display: block;
+            border-top: 1px solid #ccc;
+            background: #fff;
+            color: #000;
+            padding: .75rem 1.5rem;
+        }
+        main#main-content > section {
+            display: block;
+            padding: .75rem;
+            margin: .75rem 0;
+        }
+        main#main-content > section > h1 {
+            margin: 0 0 .25rem 0;
+        }
+        footer#main-footer {
+            display: block;
+            border-top: 1px solid #ccc;
+            background: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding: .75rem;
+        }
+        header#main-header > section p a:link,
+        header#main-header > section p a:visited,
+        footer#main-footer > p a:link,
+        footer#main-footer > p a:visited {
+            text-decoration: none;
+            color: #005bc4;
+        }
+        header#main-header > section p a:link:hover,
+        header#main-header > section p a:visited:hover,
+        footer#main-footer > p a:link:hover,
+        footer#main-footer > p a:visited:hover {
+            text-decoration: underline;
+        }
+        a.btn {
+            display: inline-block;
+            vertical-align: middle;
+            margin: .3rem .2rem .3rem 0;
+            padding: .25rem .5rem;
+            border-radius: .25rem;
+            background: #dadada;
+            color: #000;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            outline: 0;
+        }
+        a.btn:link:hover,
+        a.btn:visited:hover {
+            background: #cacaca;
+        }
+        a.btn:link:focus,
+        a.btn:link:active,
+        a.btn:visited:focus,
+        a.btn:visited:active {
+            border-color: rgba(0, 0, 0, 0.4);
+        }
+        a.btn.btn--primary {
+            background: #0f9960;
+            color: #fff;
+        }
+        a.btn.btn--primary:link:hover,
+        a.btn.btn--primary:visited:hover {
+            background: #0d8050;
+        }
+        div.versioninfo {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            justify-content: flex-start;
+            white-space: nowrap;
+            font-size: .7em;
+            line-height: 1;
+            margin: .5em 0;
+            color: #333;
+        }
+        div.versioninfo > span,
+        div.versioninfo > a {
+            display: block;
+            flex: 0 0 auto;
+            padding: .2em;
+            color: inherit;
+            text-decoration: none;
+            text-align: center;
+        }
+        div.versioninfo > span.versioninfo__bar {
+            border-right: 1px solid currentColor;
+            margin-right: .4em;
+        }
+        div.versioninfo > a {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        div.versioninfo > a:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        div.versioninfo > span > span,
+        div.versioninfo > a > span {
+            display: block;
+            font-size: .7em;
+            user-select: none;
+        }
+        @media screen and (max-width: 360px) {
+            header#main-header > nav {
+                flex-direction: column;
+                justify-content: space-around;
+            }
+        }
+        @media screen and (prefers-color-scheme: dark) {
+            header#main-header {
+                background: #111;
+                color: #fff;
+            }
+            nav#main-nav > div > a {
+                color: #ccc;
+            }
+            nav#main-nav > div > a:link,
+            nav#main-nav > div > a:visited {
+                border-bottom-color: #666;
+            }
+            nav#main-nav > div > a:link:hover,
+            nav#main-nav > div > a:visited:hover,
+            nav#main-nav > div > a:link:active,
+            nav#main-nav > div > a:link:focus,
+            nav#main-nav > div > a:visited:active,
+            nav#main-nav > div > a:visited:focus {
+                color: #fff;
+            }
+            nav#main-nav > div > a:link:hover,
+            nav#main-nav > div > a:visited:hover {
+                border-bottom-color: #fff;
+            }
+            body > header#main-header > section p a:link,
+            body > header#main-header > section p a:visited,
+            footer#main-footer > p a:link,
+            footer#main-footer > p a:visited {
+                color: #3794ff;
+            }
+            a.btn {
+                background: #252525;
+                color: #fff;
+                border-color: rgba(255, 255, 255, 0.2);
+            }
+            a.btn:link:hover,
+            a.btn:visited:hover {
+                background: #353535;
+            }
+            a.btn:link:focus,
+            a.btn:link:active,
+            a.btn:visited:focus,
+            a.btn:visited:active {
+                border-color: rgba(255, 255, 255, 0.4);
+            }
+            a.btn.btn--primary {
+                background: #017401;
+            }
+            a.btn.btn--primary:link:hover,
+            a.btn.btn--primary:visited:hover {
+                background: #118311;
+            }
+            div.versioninfo {
+                color: #ccc;
+            }
+            div.versioninfo > a {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            div.versioninfo > a:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            main#main-content {
+                border-top-color: #333;
+                background: #0c0600;
+                color: #e4ded9;
+            }
+            footer#main-footer {
+                border-top-color: #333;
+                background: #000;
+                color: #ccc;
+            }
+        }
+    </style>
+    <style>
+        .md code,
+        .md pre {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .md code {
+            font-size: .8em;
+            padding: .1em;
+        }
+        .md pre {
+            font-size: .8em;
+            padding: .4em;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .md pre > code {
+            background: none;
+            border: none;
+            font-size: inherit;
+            padding: 0;
+        }
+        @media screen and (prefers-color-scheme: dark) {
+            .md pre {
+                background: rgba(255, 255, 255, 0.05);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <nav id="main-nav">
+            <div>
+                <a>pulseaudio-win32</a>
+            </div>
+            <div>
+                <a href="#readme">About</a>
+                <a href="https://github.com/pgaskin/pulseaudio-win32/releases">Releases</a>
+                <a href="https://github.com/pgaskin/pulseaudio-win32">GitHub</a>
+            </div>
+        </nav>
+        <section>
+            <h1>PulseAudio Builds for Windows</h1>
+            <p>
+                An up-to-date PulseAudio build for Windows with an installer,
+                service, and other improvements.
+            </p>
+            <!--<p>
+                <a href="https://github.com/pgaskin/pulseaudio-win32">More Information</a>
+            </p>-->
+            <div>
+                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/releases/download/v1/pasetup.exe" class="btn btn--primary">Full installer</a>
+                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/releases/download/v1/pulseaudio.zip" class="btn">PulseAudio binaries only</a>
+            </div>
+            <div class="versioninfo">
+                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/releases/tag/v1">pulseaudio-win32 v1<span>version</span></a>
+                <span class="versioninfo__bar"></span>
+                <a target="_blank" href="https://www.freedesktop.org/wiki/Software/PulseAudio/Notes/14.0">PulseAudio 14.0<span>upstream</span></a>
+                <span class="versioninfo__dash">-</span>
+                <a target="_blank" href="https://github.com/pulseaudio/pulseaudio/compare/v14.0...81ebd8ba3f644e95a7f858ede9fc65d340ab06e2">80-g81ebd8ba3<span>upstream git</span></a>
+                <span class="versioninfo__dash">-</span>
+                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/tree/v1/src/pulseaudio">paw32-1<span>patches</span></a>
+            </div>
+        </section>
+    </header>
+    <main id="main-content">
+        <!--readme:
+        <a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/README.md" id="readme">See the README.</a>
+        -->
+        <section id="readme" class="md">
+            <h1 id="pulseaudio-win32">pulseaudio-win32</h1>
+            <p>An up-to-date PulseAudio build for Windows with an installer, service, and other
+                improvements.</p>
+            <h3 id="features">Features</h3>
+            <ul>
+                <li>Various fixes and improvements.</li>
+                <li>Standalone.</li>
+                <li>Optional installer.</li>
+                <li>Optional Windows Service wrapper.</li>
+                <li>Working <code>pactl</code>/<code>pacat</code>.</li>
+                <li>Working modules.</li>
+                <li>HTML documentation.</li>
+                <li>Works on Windows Vista and later.</li>
+            </ul>
+            <!-- TODO: unix sockets for the Windows service? -->
+        
+            <h3 id="limitations">Limitations</h3>
+            <ul>
+                <li>There are still some hard-coded paths which don't automatically relocate to
+                    the installation directory. This mainly affects the documentation. It also
+                    affects <code>*.pa.d</code> when running from the zip file (the installer will fix the
+                    path).</li>
+                <li>Unix sockets aren't currently used even when supported. Connections to the
+                    system instance are done over TCP by default.</li>
+                <li>Locale files aren't currently included.</li>
+            </ul>
+            <h3 id="building">Building</h3>
+            <pre><code class="language-bash">mkdir -p ./build &amp;&amp;
+docker build --tag pulseaudio-win32 --build-arg "PAW32_VERSION=$(echo "$(git describe --always --tags --dirty || echo unknown)" | sed -e "s/^v//g")" ./src &amp;&amp;
+docker save pulseaudio-win32 |
+tar -xOf - --wildcards '*/layer.tar' |
+tar -xvf - -C ./build</code></pre>
+            <h3 id="troubleshooting">Troubleshooting</h3>
+            <ul>
+                <li><strong>Service</strong>
+                    <ul>
+                        <li><strong>Error: The process terminated unexpectedly</strong><br>
+                            Check PulseAudio's log. Note that it gets truncated every time PulseAudio
+                            starts.</li>
+                        <li><strong>Error: The environment is incorrect</strong><br>
+                            Something went wrong when finding the AppData folder. This error shouldn't
+                            happen.</li>
+                        <li><strong>Error: The specified service has been marked for deletion</strong><br>
+                            If you have <code>services.msc</code> open, close it and try again (it prevents service
+                            deletions from working properly). Otherwise, try killing <code>pulseaudio.exe</code>
+                            and <code>pasvc.exe</code>.</li>
+                    </ul>
+                </li>
+                <li><strong>Installer</strong>
+                    <ul>
+                        <li><strong>The service does not get installed and/or started</strong>
+                            Try installing it manually from the command line with <code>pasvc install</code>.</li>
+                        <li><strong>The firewall rules do not get installed</strong>
+                            Try installing it manually from the command line with <code>pasvcfw install</code>.</li>
+                    </ul>
+                </li>
+                <li><strong>PulseAudio</strong>
+                    <ul>
+                        <li><strong>Error: cannot create wakeup pipe</strong><br>
+                            If you are starting <code>pulseaudio.exe</code> from another process, ensure the
+                            <code>SystemRoot</code> environment variable is defined.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <h3 id="silent-installation">Silent installation</h3>
+            <p>The installer uses Inno Setup 6 and supports the usual flags (e.g. <code>/SILENT</code>,
+                <code>/VERYSILENT</code>).
+            </p>
+            <p>The following components are available (all are selected by default) and can be
+                passed as a comma separated list to <code>/COMPONENTS=</code>:</p>
+            <ul>
+                <li><code>pulseaudio</code> (required) - PulseAudio daemon, modules, and tools</li>
+                <li><code>documentation</code> - HTML documentation.</li>
+                <li><code>service</code> - Windows Service.</li>
+                <li><code>uninstaller</code> - Uninstallation support.</li>
+            </ul>
+            <p>The following tasks are available when the <code>service</code> component is selected and
+                can be passed as a comma separated list to <code>/TASKS=</code>:</p>
+            <ul>
+                <li><code>firewall</code> - Add a firewall rule (4713/tcp).<ul>
+                        <li><code>firewall/deny</code> - Deny all external connections.</li>
+                        <li><code>firewall/allow</code> - Allow external connections on private networks.</li>
+                        <li><code>firewall/allowall</code> - Allow all external connections.</li>
+                        <li><code>firewall/allowalledge</code> - Allow all external connections including edge
+                            traversal.</li>
+                    </ul>
+                </li>
+                <li><code>svcmodload</code> - Allow loading additional modules (note that this is a potential
+                    security risk).</li>
+            </ul>
+            <p>The included configuration files in the installation directory will be
+                overwritten on install and deleted on uninstall. To preserve your changes, place
+                your custom configuration files in <code>*.pa.d\*.pa</code> and <code>*.conf.d\*.conf</code>.</p>
+            <p>Uninstalling will remove everything except for the log and state data for the
+                service if used.</p>
+            <h3 id="notes">Notes</h3>
+            <p>While this repository is licensed under the MIT license, the icon and build
+                output is licensed under the LGPL like PulseAudio itself (the PulseAudio build
+                isn't linked to GPL libraries).</p>
+        </section>
+    </main>
+    <footer id="main-footer">
+        <p>Downloads include <a target="_blank" href="https://www.freedesktop.org/wiki/Software/PulseAudio">PulseAudio</a> binaries and are <a target="_blank" href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/blob/master/LICENSE">licensed</a> under the <a target="_blank" href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/blob/master/LGPL">LGPL</a>.</p>
+        <p>The build script and Windows service/installer <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/tree/master/src">code</a> are licensed under the <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/blob/master/LICENSE">MIT license</a>.</p>
+        <p>Copyright 2021 <a href="https://pgaskin.net">Patrick Gaskin</a></p>
+    </footer>
+    <!--readme:
+    <script src="https://cdn.jsdelivr.net/npm/marked@1.2.7/lib/marked.min.js"></script>
+    <script>
+        var req = new XMLHttpRequest();
+        req.addEventListener("load", function() {
+            var r = document.createElement("section");
+            r.id = "readme";
+            r.className = "md"
+            r.innerHTML = marked(this.responseText);
+            document.getElementById("readme").remove();
+            document.getElementById("main-content").appendChild(r);
+        });
+        req.open("GET", "https://raw.githubusercontent.com/pgaskin/pulseaudio-win32/v1/README.md");
+        req.send();
+    </script>
+    -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66226417-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-66226417-1');
+    </script>
+</body>
+</html>
