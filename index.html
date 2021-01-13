@@ -194,6 +194,18 @@
             font-size: .7em;
             user-select: none;
         }
+        table#patches-table td,
+        table#patches-table th {
+            text-align: left;
+        }
+        table#patches-table td:last-child,
+        table#patches-table th:last-child {
+            text-align: right;
+        }
+        table#patches-table td:first-child,
+        table#patches-table td:last-child {
+            vertical-align: top;
+        }
         @media screen and (max-width: 360px) {
             header#main-header > nav {
                 flex-direction: column;
@@ -295,10 +307,34 @@
             font-size: inherit;
             padding: 0;
         }
+        .md table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .md table tr {
+            border: 1px solid #ccc;
+        }
+        .md table thead tr {
+            background: #eee;
+        }
+        .md table th {
+            white-space: nowrap;
+            font-weight: bold;
+        }
+        .md table th,
+        .md table td {
+            padding: .3em .5em;
+        }
         @media screen and (prefers-color-scheme: dark) {
             .md pre {
                 background: rgba(255, 255, 255, 0.05);
                 border-color: rgba(255, 255, 255, 0.1);
+            }
+            .md table tr {
+                border: 1px solid #555;
+            }
+            .md table thead tr {
+                background: #222;
             }
         }
     </style>
@@ -449,6 +485,71 @@ tar -xvf - -C ./build</code></pre>
             <p>While this repository is licensed under the MIT license, the icon and build
                 output is licensed under the LGPL like PulseAudio itself (the PulseAudio build
                 isn't linked to GPL libraries).</p>
+        </section>
+        <section class="md">
+            <h1 id="patches">Patches</h1>
+            <p>The following patches were created for pulseaudio-win32.</p>
+            <table id="patches-table">
+                <thead>
+                    <tr>
+                        <th>Link</th>
+                        <th>Patch Description</th>
+                        <th>Upstream Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0001-win32-Fix-duplicate-definitions-in-arpa-inet.h-arpa-.patch">Patch</a></td>
+                        <td>win32: Fix duplicate definitions in arpa-inet.h, arpa-inet.c, and poll.h</td>
+                        <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/458">Merged</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0002-win32-Use-__MINGW_PRINTF_FORMAT-instead-of-__printf_.patch">Patch</a></td>
+                        <td>win32: Use __MINGW_PRINTF_FORMAT instead of __printf__ for MinGW builds</td>
+                        <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/458">Merged</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0003-win32-Fix-format-specifiers-for-DWORD-values.patch">Patch</a></td>
+                        <td>win32: Fix format specifiers for DWORD values</td>
+                        <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/458">Merged</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0004-win32-Fix-privlibdir-for-running-on-Windows.patch">Patch</a></td>
+                        <td>win32: Fix privlibdir for running on Windows</td>
+                        <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/458">Merged</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0005-client-conf-Enable-auto-connect-localhost-by-default.patch">Patch</a></td>
+                        <td>client-conf: Enable auto-connect-localhost by default</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0006-system.pa-Tweaks-for-custom-build.patch">Patch</a></td>
+                        <td>system.pa: Tweaks for custom build</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0007-waveout-Fix-compile-warnings.patch">Patch</a></td>
+                        <td>waveout: Fix compile warnings</td>
+                        <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/457">Merged</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0008-win32-Fix-WSAStartup-issues.patch">Patch</a></td>
+                        <td>win32: Fix WSAStartup issues</td>
+                        <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/456">Merged</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0009-cli-Fix-crash-when-using-.include-with-an-empty-dire.patch">Patch</a></td>
+                        <td>cli: Fix crash when using .include with an empty directory</td>
+                        <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/454">Merged</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0010-client-Make-auto_connect_localhost-respect-HAVE_IPv6.patch">Patch</a></td>
+                        <td>client: Make auto_connect_localhost respect HAVE_IPv6 and OS_IS_WIN32</td>
+                        <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/455">Merged</a></td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
     </main>
     <footer id="main-footer">
