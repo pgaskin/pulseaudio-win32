@@ -58,6 +58,10 @@ tar -xvf - -C ./build
   - **Error: cannot create wakeup pipe**<br>
     If you are starting `pulseaudio.exe` from another process, ensure the
     `SystemRoot` environment variable is defined.
+  - **Audio is much louder than other apps at the same volume level or is distorted even when relatively quiet**
+    Try disabling audio effects on the output devices. Dolby Audio (e.g. the one
+    preloaded on many devices) can cause this to happen if it is enabled even if
+    all individual effects are turned off.
 
 ### Silent installation
 
