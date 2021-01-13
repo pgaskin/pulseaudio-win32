@@ -1,4 +1,4 @@
-From 458090d3320859fe671bbf0413294d681087149e Mon Sep 17 00:00:00 2001
+From 368a54413e161209f130eb6c48c15e76cd984808 Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Thu, 31 Dec 2020 20:43:42 -0500
 Subject: [PATCH] system.pa: Tweaks for custom build
@@ -52,5 +52,5 @@ index 1470e2368..91d0a814a 100755
  ### Automatically restore the default sink/source when changed by the user
  ### during runtime
 -- 
-2.29.2
+2.30.0
 
