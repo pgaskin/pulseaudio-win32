@@ -1,8 +1,8 @@
-From 28ca80a2cba72b74b9ddba9fb75ab1fbd7c8fe4c Mon Sep 17 00:00:00 2001
+From 0d5affd628571480518b56e5f53c7b9af2b24efc Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Wed, 21 Apr 2021 14:11:28 -0400
 Subject: [PATCH] cli-command: Replace config dir with toplevel for .include on
-  win32
+ win32
 
 This makes the behaviour match pa_{open,find}_config_file by
 replacing PA_DEFAULT_CONFIG_DIR with the toplevel.

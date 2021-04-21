@@ -89,7 +89,7 @@ RUN mkdir -p /src
 RUN git init /src/pulseaudio && \
     git -C /src/pulseaudio remote add origin https://gitlab.freedesktop.org/pulseaudio/pulseaudio.git && \
     git -C /src/pulseaudio fetch origin && \
-    git -C /src/pulseaudio checkout 613b3ebc2ccc3a39b49d033850e39d760d22b5aa
+    git -C /src/pulseaudio checkout 1c1d0c7827ba0e21038ad9215097cb7b2785ed3e
 COPY ./pulseaudio/* /src/
 RUN git -C /src/pulseaudio apply /src/*.patch
 ARG PAW32_VERSION=unknown
@@ -105,7 +105,8 @@ RUN meson setup \
         -Dprefix=/pulseaudio \
         -Dmodlibexecdir=/pulseaudio/bin \
         -Dbluez5=false \
-        -Dc_args="-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=_WIN32_WINNT_VISTA" \
+        # _WIN32_WINNT=_WIN32_WINNT_VISTA
+        -Dc_args="-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0600" \
         /build/pulseaudio /src/pulseaudio
 RUN ninja -C /build/pulseaudio
 RUN meson install -C /build/pulseaudio

@@ -1,4 +1,4 @@
-From 368a54413e161209f130eb6c48c15e76cd984808 Mon Sep 17 00:00:00 2001
+From c29acebbebf80d485485259ea4997d25a1dabc9c Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Thu, 31 Dec 2020 20:43:42 -0500
 Subject: [PATCH] system.pa: Tweaks for custom build
@@ -9,7 +9,7 @@ Subject: [PATCH] system.pa: Tweaks for custom build
  2 files changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/src/daemon/default.pa.in b/src/daemon/default.pa.in
-index 3468a89b9..b6a127032 100755
+index a3ddad9ff..e5f310233 100755
 --- a/src/daemon/default.pa.in
 +++ b/src/daemon/default.pa.in
 @@ -45,7 +45,7 @@ ifelse(@HAVE_OSS_OUTPUT@, 1, [dnl
@@ -22,7 +22,7 @@ index 3468a89b9..b6a127032 100755
  #load-module module-null-sink
  ifelse(@HAVE_MKFIFO@, 1, [dnl
 diff --git a/src/daemon/system.pa.in b/src/daemon/system.pa.in
-index 1470e2368..91d0a814a 100755
+index 989fcb4f3..d3512005a 100755
 --- a/src/daemon/system.pa.in
 +++ b/src/daemon/system.pa.in
 @@ -24,6 +24,11 @@ load-module module-device-restore
@@ -37,8 +37,8 @@ index 1470e2368..91d0a814a 100755
  ### Automatically load driver modules depending on the hardware available
  ifelse(@HAVE_UDEV@, 1, [dnl
  .ifexists module-udev-detect@PA_SOEXT@
-@@ -41,10 +46,13 @@ load-module module-detect
- .endif
+@@ -47,10 +52,13 @@ load-module module-devd-detect
+ ])dnl
  
  ### Load several protocols
 +ifelse(@HAVE_AF_UNIX@, 1, [dnl
@@ -52,5 +52,5 @@ index 1470e2368..91d0a814a 100755
  ### Automatically restore the default sink/source when changed by the user
  ### during runtime
 -- 
-2.30.0
+2.31.0
 
