@@ -37,7 +37,7 @@ Name: firewall/allowalledge; Description: "Allow all external connections includ
 Name: svcmodload;            Description: "Allow module loading";                                    GroupDescription: Service; Flags: unchecked; Components: Service
 
 [Files]
-Source: "pulseaudio\*";          DestDir: "{app}";     Flags: recursesubdirs; Components: pulseaudio; AfterInstall: UpdateConfPaths
+Source: "pulseaudio\*";          DestDir: "{app}";     Flags: recursesubdirs; Components: pulseaudio;
 Source: "padoc\*";               DestDir: "{app}";     Flags: recursesubdirs; Components: documentation
 Source: "pasvc\bin\pasvc.exe";   DestDir: "{app}\bin"; Flags: recursesubdirs; Components: service
 Source: "pasvc\bin\pasvcfw.exe"; DestDir: "{app}\bin"; Flags: recursesubdirs; Components: service; Tasks: firewall
@@ -76,24 +76,4 @@ begin
     Exec(ExpandConstant('{app}\bin\pasvc.exe'), 'stop', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM pulseaudio.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM pasvc.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-end;
-
-procedure UpdateConfPaths();
-var
-    Name: string;
-    File: TStrings;
-    Text: string;
-begin
-    Name := ExpandConstant(CurrentFileName)
-    if ExtractFileExt(Name) = '.pa' then
-    begin
-        File := TStringList.Create
-        File.LoadFromFile(Name);
-        Text := File.Text;
-        if StringChangeEx(Text, '/pulseaudio/etc/pulse/', ExpandConstant('{app}\etc\pulse\'), True) > 0 then
-        begin;
-            File.Text := Text;
-            File.SaveToFile(Name);
-        end;
-    end;
 end;

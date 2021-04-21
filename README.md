@@ -19,9 +19,7 @@ improvements.
 ### Limitations
 
 - There are still some hard-coded paths which don't automatically relocate to
-  the installation directory. This mainly affects the documentation. It also
-  affects `*.pa.d` when running from the zip file (the installer will fix the
-  path).
+  the installation directory. This mainly affects the documentation.
 - Unix sockets aren't currently used even when supported. Connections to the
   system instance are done over TCP by default.
 - Locale files aren't currently included.
