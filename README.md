@@ -8,7 +8,7 @@ improvements.
 - Various fixes and improvements.
 - Standalone.
 - Optional installer.
-- Optional Windows Service wrapper.
+- Can run as a Windows Service.
 - Working `pactl`/`pacat`.
 - Working modules.
 - HTML documentation.
@@ -47,6 +47,10 @@ tar -xvf - -C ./build
     If you have `services.msc` open, close it and try again (it prevents service
     deletions from working properly). Otherwise, try killing `pulseaudio.exe`
     and `pasvc.exe`.
+  - **Permission errors for ProgramData**<br>
+    If you attempted to run pulseaudio with the `--system` option manually or
+    otherwise created conflicting files in ProgramData, delete them and start
+    the service again.
 - **Installer**
   - **The service does not get installed and/or started**
     Try installing it manually from the command line with `pasvc install`.
