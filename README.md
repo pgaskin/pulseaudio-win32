@@ -11,17 +11,15 @@ improvements.
 - Can run as a Windows Service.
 - Working `pactl`/`pacat`.
 - Working modules.
+- Working auto-connection to user and system instances.
+- Working unix sockets for both user and system instances on Windows 10.
 - HTML documentation.
 - Works on Windows Vista and later.
-
-<!-- TODO: unix sockets for the Windows service? -->
 
 ### Limitations
 
 - There are still some hard-coded paths which don't automatically relocate to
   the installation directory. This mainly affects the documentation.
-- Unix sockets aren't currently used even when supported. Connections to the
-  system instance are done over TCP by default.
 - Locale files aren't currently included.
 
 ### Building
@@ -51,6 +49,10 @@ tar -xvf - -C ./build
     If you attempted to run pulseaudio with the `--system` option manually or
     otherwise created conflicting files in ProgramData, delete them and start
     the service again.
+  - **Invalid argument errors when attempting to create the Unix socket for the system service**
+    This is caused by file permission errors when PulseAudio cannot delete or
+    write to the socket file or the directory it's in. Try deleting the
+    ProgramData folder for PulseAudio and restarting the service.
 - **Installer**
   - **The service does not get installed and/or started**
     Try installing it manually from the command line with `pasvc install`.

@@ -1,0 +1,26 @@
+From 1ca823cbd2785c564df90c20bb51cdb3f385f003 Mon Sep 17 00:00:00 2001
+From: Patrick Gaskin <patrick@pgaskin.net>
+Date: Thu, 22 Apr 2021 08:11:11 -0400
+Subject: [PATCH] system.pa: Tweaks for custom build with unix sockets
+
+Use anonymous authentication for the system socket.
+---
+ src/daemon/system.pa.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/daemon/system.pa.in b/src/daemon/system.pa.in
+index d3512005a..c55df5bb2 100755
+--- a/src/daemon/system.pa.in
++++ b/src/daemon/system.pa.in
+@@ -56,7 +56,7 @@ ifelse(@HAVE_AF_UNIX@, 1, [dnl
+ .ifexists module-esound-protocol-unix@PA_SOEXT@
+ load-module module-esound-protocol-unix
+ .endif
+-load-module module-native-protocol-unix
++load-module module-native-protocol-unix auth-anonymous=1
+ ])dnl
+ load-module module-native-protocol-tcp auth-anonymous=1
+ 
+-- 
+2.31.0
+
