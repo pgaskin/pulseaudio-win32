@@ -105,8 +105,8 @@ RUN meson setup \
         -Dprefix=/pulseaudio \
         -Dmodlibexecdir=/pulseaudio/bin \
         -Dbluez5=false \
-        # _WIN32_WINNT=_WIN32_WINNT_VISTA
-        -Dc_args="-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0600" \
+        # _WIN32_WINNT=_WIN32_WINNT_WIN7
+        -Dc_args="-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601" \
         /build/pulseaudio /src/pulseaudio
 RUN ninja -C /build/pulseaudio
 RUN meson install -C /build/pulseaudio

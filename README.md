@@ -14,7 +14,7 @@ improvements.
 - Working auto-connection to user and system instances.
 - Working unix sockets for both user and system instances on Windows 10.
 - HTML documentation.
-- Works on Windows Vista and later.
+- Works on Windows 7 and later.
 
 ### Limitations
 
