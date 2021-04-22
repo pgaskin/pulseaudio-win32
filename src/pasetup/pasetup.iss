@@ -67,7 +67,7 @@ Filename: "{app}\bin\pasvc.exe";   Parameters: "start";                         
 Filename: "{app}\bin\pasvc.exe";   Parameters: "stop";                  RunOnceId: "StopSvc";     Flags: runhidden; Components: service
 Filename: "{app}\bin\pasvc.exe";   Parameters: "delete";                RunOnceId: "DeleteSvc";   Flags: runhidden; Components: service
 Filename: "{sys}\taskkill.exe";    Parameters: "/F /IM pulseaudio.exe"; RunOnceId: "KillPA";      Flags: runhidden; Components: service
-Filename: "{sys}\taskkill.exe";    Parameters: "/F /IM pasvc.exe";      RunOnceId: "KillPA";      Flags: runhidden; Components: service
+Filename: "{sys}\taskkill.exe";    Parameters: "/F /IM pasvc.exe";      RunOnceId: "KillPASvc";   Flags: runhidden; Components: service
 Filename: "{app}\bin\pasvcfw.exe"; Parameters: "delete";                RunOnceId: "DeleteSvcFw"; Flags: runhidden; Components: service; Tasks: firewall
 
 [Code]
