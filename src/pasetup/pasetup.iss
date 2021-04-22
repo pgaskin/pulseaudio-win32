@@ -48,6 +48,9 @@ Name: "{app}\etc\pulse\system.pa.d"
 Name: "{app}\etc\pulse\daemon.conf.d"
 Name: "{app}\etc\pulse\client.conf.d"
 
+[UninstallDelete]
+Name: "{commonappdata}\PulseAudio"; Type: filesandordirs
+
 [Run]
 ; TODO: maybe fail the installation if a command fails?
 Filename: "{app}\bin\pasvcfw.exe"; Parameters: "install /PaExe:""{app}\bin\pulseaudio.exe"" /Mode:deny";         StatusMsg: "Installing firewall rule...";   Flags: runhidden; Components: service; Tasks: firewall/deny
