@@ -1,4 +1,4 @@
-From 7144f977d6a304786b640cd4352ede6109a3c270 Mon Sep 17 00:00:00 2001
+From 3e25facff7148884202518d75f684386e4a8527c Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Thu, 22 Apr 2021 08:05:10 -0400
 Subject: [PATCH] daemon: Add support for running as a service on win32
@@ -10,14 +10,14 @@ Subject: [PATCH] daemon: Add support for running as a service on win32
   on Windows (overrides the build config, similar to the existing
   config path replacement logic).
 ---
- src/daemon/main.c         | 127 +++++++++++++++++++++++++++++++++++++-
+ src/daemon/main.c         | 125 +++++++++++++++++++++++++++++++++++++-
  src/pulse/context.c       |   7 +++
  src/pulsecore/core-util.c |  10 +++
  src/pulsecore/core-util.h |   1 +
- 4 files changed, 143 insertions(+), 2 deletions(-)
+ 4 files changed, 141 insertions(+), 2 deletions(-)
 
 diff --git a/src/daemon/main.c b/src/daemon/main.c
-index a424d9ef9..71a10aa34 100644
+index a424d9ef9..e259b3704 100644
 --- a/src/daemon/main.c
 +++ b/src/daemon/main.c
 @@ -60,6 +60,10 @@
@@ -31,7 +31,7 @@ index a424d9ef9..71a10aa34 100644
  #include <pulse/client-conf.h>
  #include <pulse/mainloop.h>
  #include <pulse/mainloop-signal.h>
-@@ -156,7 +160,35 @@ static void signal_callback(pa_mainloop_api* m, pa_signal_event *e, int sig, voi
+@@ -156,7 +160,33 @@ static void signal_callback(pa_mainloop_api* m, pa_signal_event *e, int sig, voi
      }
  }
  
@@ -40,8 +40,6 @@ index a424d9ef9..71a10aa34 100644
 +#if defined(OS_IS_WIN32)
 +
 +static int change_user(void) {
-+    // TODO: drop token privileges?
-+
 +    pa_log_info("Overriding system runtime/config base dir to '%s'.", pa_win32_get_system_appdata());
 +
 +    char *run_path = pa_sprintf_malloc("%s" PA_PATH_SEP "run", pa_win32_get_system_appdata());
@@ -68,7 +66,7 @@ index a424d9ef9..71a10aa34 100644
  
  static int change_user(void) {
      struct passwd *pw;
-@@ -377,7 +409,45 @@ fail:
+@@ -377,7 +407,45 @@ fail:
  }
  #endif
  
@@ -115,7 +113,7 @@ index a424d9ef9..71a10aa34 100644
      pa_core *c = NULL;
      pa_strbuf *buf = NULL;
      pa_daemon_conf *conf = NULL;
-@@ -402,6 +472,23 @@ int main(int argc, char *argv[]) {
+@@ -402,6 +470,23 @@ int main(int argc, char *argv[]) {
      bool start_server;
  #endif
  
@@ -139,7 +137,7 @@ index a424d9ef9..71a10aa34 100644
      pa_log_set_ident("pulseaudio");
      pa_log_set_level(PA_LOG_NOTICE);
      pa_log_set_flags(PA_LOG_COLORS|PA_LOG_PRINT_FILE|PA_LOG_PRINT_LEVEL, PA_LOG_RESET);
-@@ -1172,6 +1259,18 @@ int main(int argc, char *argv[]) {
+@@ -1172,6 +1257,18 @@ int main(int argc, char *argv[]) {
      sd_notify(0, "READY=1");
  #endif
  
@@ -158,7 +156,7 @@ index a424d9ef9..71a10aa34 100644
      retval = 0;
      if (pa_mainloop_run(mainloop, &retval) < 0)
          goto finish;
-@@ -1182,6 +1281,18 @@ int main(int argc, char *argv[]) {
+@@ -1182,6 +1279,18 @@ int main(int argc, char *argv[]) {
      sd_notify(0, "STOPPING=1");
  #endif
  
@@ -177,7 +175,7 @@ index a424d9ef9..71a10aa34 100644
  finish:
  #ifdef HAVE_DBUS
      if (server_bus)
-@@ -1249,5 +1360,17 @@ finish:
+@@ -1249,5 +1358,17 @@ finish:
      dbus_shutdown();
  #endif
  

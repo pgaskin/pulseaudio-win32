@@ -1,4 +1,4 @@
-From d7c3e2f86b9a820a6fc61112e675b1b03218a2fa Mon Sep 17 00:00:00 2001
+From ab2f51b9b4ec515e7b18002d6b24a460979c6e09 Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Thu, 22 Apr 2021 21:44:40 -0400
 Subject: [PATCH] win32: Use DACLs when setting socket permissions
