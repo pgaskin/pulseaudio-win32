@@ -128,10 +128,39 @@ RUN find /pulseaudio \
     rmdir /pulseaudio/share /pulseaudio/lib
 RUN bash /src/mingw32-deps.sh "https://download.opensuse.org/repositories/windows:/mingw:/win32/openSUSE_Tumbleweed" /pulseaudio/bin
 
+FROM mingw32 AS build-res
+COPY --from=build-pulseaudio-stage1 /pulseaudio.version /pulseaudio.version
+RUN touch /tmp/pulseaudio.rc && \
+    echo '#include "winver.h"' >> /tmp/pulseaudio.rc && \
+    echo 'VS_VERSION_INFO VERSIONINFO {' >> /tmp/pulseaudio.rc && \
+    echo '    BLOCK "StringFileInfo" {' >> /tmp/pulseaudio.rc && \
+    echo '        BLOCK "040904b0" {' >> /tmp/pulseaudio.rc && \
+    echo '            VALUE "CompanyName", "Patrick Gaskin\0"' >> /tmp/pulseaudio.rc && \
+    echo '            VALUE "ProductName", "PulseAudio\0"' >> /tmp/pulseaudio.rc && \
+    echo '            VALUE "ProductVersion", "pulseaudio-win32 '"$(cat /pulseaudio.version)"'\0"' >> /tmp/pulseaudio.rc && \
+    echo '            VALUE "FileDescription", "PulseAudio\0"' >> /tmp/pulseaudio.rc && \
+    echo '            VALUE "FileVersion", "0.0.0.0\0"' >> /tmp/pulseaudio.rc && \
+    echo '            VALUE "OriginalFilename", "pulseaudio.exe\0"' >> /tmp/pulseaudio.rc && \
+    echo '            VALUE "InternalName", "pulseaudio\0"' >> /tmp/pulseaudio.rc && \
+    echo '        }' >> /tmp/pulseaudio.rc && \
+    echo '    }' >> /tmp/pulseaudio.rc && \
+    echo '    BLOCK "VarFileInfo" {' >> /tmp/pulseaudio.rc && \
+    echo '        VALUE "Translation", 0x409, 1200' >> /tmp/pulseaudio.rc && \
+    echo '    }' >> /tmp/pulseaudio.rc && \
+    echo '}' >> /tmp/pulseaudio.rc
+# note: it needs to be in a subdir (/tmp) or windres gives an assertion error about include directories
+RUN i686-w64-mingw32-windres /tmp/pulseaudio.rc -o /pulseaudio.res
+
 FROM reshack AS build-pulseaudio-stage2
 COPY --from=build-pulseaudio-stage1 /pulseaudio         /pulseaudio
 COPY --from=build-pulseaudio-stage1 /pulseaudio.version /pulseaudio.version
+COPY --from=build-res               /pulseaudio.res     /pulseaudio.res
 COPY --from=build-icon              /pulseaudio.ico     /pulseaudio.ico
+RUN ResourceHacker \
+        -open "Z:\\pulseaudio\\bin\\pulseaudio.exe" \
+        -save "Z:\\pulseaudio\\bin\\pulseaudio.exe" \
+        -action add \
+        -res "Z:\\pulseaudio.res"
 RUN ResourceHacker \
         -open "Z:\\pulseaudio\\bin\\pulseaudio.exe" \
         -save "Z:\\pulseaudio\\bin\\pulseaudio.exe" \
