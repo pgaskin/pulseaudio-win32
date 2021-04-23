@@ -362,24 +362,21 @@
                 <a href="https://github.com/pgaskin/pulseaudio-win32">More Information</a>
             </p>-->
             <div>
-                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/releases/download/v2/pasetup.exe" class="btn btn--primary">Full installer</a>
-                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/releases/download/v2/pulseaudio.zip" class="btn">PulseAudio binaries only</a>
+                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/releases/download/v3/pasetup.exe" class="btn btn--primary">Full installer</a>
+                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/releases/download/v3/pulseaudio.zip" class="btn">PulseAudio binaries only</a>
             </div>
             <div class="versioninfo">
-                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/releases/tag/v2">pulseaudio-win32 v2<span>version</span></a>
+                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/releases/tag/v3">pulseaudio-win32 v3<span>version</span></a>
                 <span class="versioninfo__bar"></span>
                 <a target="_blank" href="https://www.freedesktop.org/wiki/Software/PulseAudio/Notes/14.0">PulseAudio 14.0<span>upstream</span></a>
                 <span class="versioninfo__dash">-</span>
-                <a target="_blank" href="https://github.com/pulseaudio/pulseaudio/compare/v14.0...613b3ebc2ccc3a39b49d033850e39d760d22b5aa">105-g613b3ebc2<span>upstream git</span></a>
+                <a target="_blank" href="https://github.com/pulseaudio/pulseaudio/compare/v14.0...1c1d0c7827ba0e21038ad9215097cb7b2785ed3e">281-g1c1d0c782<span>upstream git</span></a>
                 <span class="versioninfo__dash">-</span>
-                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/tree/v2/src/pulseaudio">paw32-2<span>patches</span></a>
+                <a target="_blank" href="https://github.com/pgaskin/pulseaudio-win32/tree/v3/src/pulseaudio">paw32-3<span>patches</span></a>
             </div>
         </section>
     </header>
     <main id="main-content">
-        <!--readme:
-        <a href="https://github.com/pgaskin/pulseaudio-win32/blob/v2/README.md" id="readme">See the README.</a>
-        -->
         <section id="readme" class="md">
             <h1 id="pulseaudio-win32">pulseaudio-win32</h1>
             <p>An up-to-date PulseAudio build for Windows with an installer, service, and other
@@ -389,22 +386,19 @@
                 <li>Various fixes and improvements.</li>
                 <li>Standalone.</li>
                 <li>Optional installer.</li>
-                <li>Optional Windows Service wrapper.</li>
+                <li>Can run as a Windows Service.</li>
                 <li>Working <code>pactl</code>/<code>pacat</code>.</li>
+                <li>Working auto-connection to user and system instances.</li>
+                <li>Working unix sockets for both user and system instances on Windows 10.</li>
                 <li>Working modules.</li>
                 <li>HTML documentation.</li>
-                <li>Works on Windows Vista and later.</li>
+                <li>Works on Windows 7 and later.</li>
             </ul>
-            <!-- TODO: unix sockets for the Windows service? -->
         
             <h3 id="limitations">Limitations</h3>
             <ul>
                 <li>There are still some hard-coded paths which don't automatically relocate to
-                    the installation directory. This mainly affects the documentation. It also
-                    affects <code>*.pa.d</code> when running from the zip file (the installer will fix the
-                    path).</li>
-                <li>Unix sockets aren't currently used even when supported. Connections to the
-                    system instance are done over TCP by default.</li>
+                    the installation directory. This mainly affects the documentation.</li>
                 <li>Locale files aren't currently included.</li>
             </ul>
             <h3 id="building">Building</h3>
@@ -427,6 +421,14 @@ tar -xvf - -C ./build</code></pre>
                             If you have <code>services.msc</code> open, close it and try again (it prevents service
                             deletions from working properly). Otherwise, try killing <code>pulseaudio.exe</code>
                             and <code>pasvc.exe</code>.</li>
+                        <li><strong>Permission errors for ProgramData</strong><br>
+                            If you attempted to run pulseaudio with the <code>--system</code> option manually or
+                            otherwise created conflicting files in ProgramData, delete them and start
+                            the service again.</li>
+                        <li><strong>Invalid argument errors when attempting to create the Unix socket for the system service</strong><br>
+                            This is caused by file permission errors when PulseAudio cannot delete or
+                            write to the socket file or the directory it's in. Try deleting the
+                            ProgramData folder for PulseAudio and restarting the service.</li>
                     </ul>
                 </li>
                 <li><strong>Installer</strong>
@@ -480,8 +482,8 @@ tar -xvf - -C ./build</code></pre>
             <p>The included configuration files in the installation directory will be
                 overwritten on install and deleted on uninstall. To preserve your changes, place
                 your custom configuration files in <code>*.pa.d\*.pa</code> and <code>*.conf.d\*.conf</code>.</p>
-            <p>Uninstalling will remove everything except for the log and state data for the
-                service if used.</p>
+            <p>Uninstalling will remove everything except for custom configuration files in the
+                aforementioned folders.</p>
             <h3 id="notes">Notes</h3>
             <p>While this repository is licensed under the MIT license, the icon and build
                 output is licensed under the LGPL like PulseAudio itself (the PulseAudio build
@@ -520,16 +522,6 @@ tar -xvf - -C ./build</code></pre>
                         <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/458">Merged</a></td>
                     </tr>
                     <tr>
-                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v2/src/pulseaudio/0001-client-conf-Enable-auto-connect-localhost-by-default.patch">Patch</a></td>
-                        <td>client-conf: Enable auto-connect-localhost by default</td>
-                        <td>N/A</td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v2/src/pulseaudio/0002-system.pa-Tweaks-for-custom-build.patch">Patch</a></td>
-                        <td>system.pa: Tweaks for custom build</td>
-                        <td>N/A</td>
-                    </tr>
-                    <tr>
                         <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0007-waveout-Fix-compile-warnings.patch">Patch</a></td>
                         <td>waveout: Fix compile warnings</td>
                         <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/457">Merged</a></td>
@@ -548,6 +540,61 @@ tar -xvf - -C ./build</code></pre>
                         <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v1/src/pulseaudio/0010-client-Make-auto_connect_localhost-respect-HAVE_IPv6.patch">Patch</a></td>
                         <td>client: Make auto_connect_localhost respect HAVE_IPv6 and OS_IS_WIN32</td>
                         <td><a href="https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/merge_requests/455">Merged</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0001-client-conf-Enable-auto-connect-localhost-by-default.patch">Patch</a></td>
+                        <td>client-conf: Enable auto-connect-localhost by default</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0002-system.pa-Tweaks-for-custom-build.patch">Patch</a></td>
+                        <td>system.pa: Tweaks for custom build</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0003-cli-command-Replace-config-dir-with-toplevel-for-.in.patch">Patch</a></td>
+                        <td>cli-command: Replace config dir with toplevel for .include on win32</td>
+                        <td>Not Submitted</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0004-win32-Fix-minimum-Windows-version-for-inet_-ntop-pto.patch">Patch</a></td>
+                        <td>win32: Fix minimum Windows version for inet_{ntop,pton}</td>
+                        <td>Not Submitted</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0005-win32-Fix-environment-variables-set-with-pa_-unset-s.patch">Patch</a></td>
+                        <td>win32: Fix environment variables set with pa_{unset,set}_env not taking effect</td>
+                        <td>Not Submitted</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0006-daemon-Add-support-for-running-as-a-service-on-win32.patch">Patch</a></td>
+                        <td>daemon: Add support for running as a service on win32</td>
+                        <td>Not Submitted</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0007-build-sys-meson-Merge-system_conf-config-data-from-d.patch">Patch</a></td>
+                        <td>build-sys: meson: Merge system_conf config data from default_conf</td>
+                        <td>Not Submitted</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0008-win32-Misc-Unix-socket-fixes.patch">Patch</a></td>
+                        <td>win32: Misc Unix socket fixes</td>
+                        <td>Not Submitted</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0009-system.pa-Tweaks-for-custom-build-with-unix-sockets.patch">Patch</a></td>
+                        <td>system.pa: Tweaks for custom build with unix sockets</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0010-win32-Use-DACLs-when-setting-socket-permissions.patch">Patch</a></td>
+                        <td>win32: Use DACLs when setting socket permissions</td>
+                        <td>Not Submitted</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/pgaskin/pulseaudio-win32/blob/v3/src/pulseaudio/0011-win32-Add-DACLs-for-directories-created-by-system-da.patch">Patch</a></td>
+                        <td>win32: Add DACLs for directories created by system daemon</td>
+                        <td>Not Submitted</td>
                     </tr>
                 </tbody>
             </table>
