@@ -37,10 +37,10 @@ Name: firewall/allowalledge; Description: "Allow all external connections includ
 Name: svcmodload;            Description: "Allow module loading";                                    GroupDescription: Service; Flags: unchecked; Components: Service
 
 [Files]
-Source: "pulseaudio\*";          DestDir: "{app}";     Flags: recursesubdirs; Components: pulseaudio;
-Source: "padoc\*";               DestDir: "{app}";     Flags: recursesubdirs; Components: documentation
-Source: "pasvc\bin\pasvc.exe";   DestDir: "{app}\bin"; Flags: recursesubdirs; Components: service
-Source: "pasvc\bin\pasvcfw.exe"; DestDir: "{app}\bin"; Flags: recursesubdirs; Components: service; Tasks: firewall
+Source: "pulseaudio\*";          DestDir: "{app}";     Flags: recursesubdirs ignoreversion; Components: pulseaudio;
+Source: "padoc\*";               DestDir: "{app}";     Flags: recursesubdirs ignoreversion; Components: documentation
+Source: "pasvc\bin\pasvc.exe";   DestDir: "{app}\bin"; Flags: recursesubdirs ignoreversion; Components: service
+Source: "pasvc\bin\pasvcfw.exe"; DestDir: "{app}\bin"; Flags: recursesubdirs ignoreversion; Components: service; Tasks: firewall
 
 [Dirs]
 Name: "{app}\etc\pulse\default.pa.d"
