@@ -49,6 +49,9 @@ Name: "{app}\etc\pulse\daemon.conf.d"
 Name: "{app}\etc\pulse\client.conf.d"
 Name: "{commonappdata}\PulseAudio"; Permissions: service-full
 
+[InstallDelete]
+Name: "{commonappdata}\PulseAudio\pulseaudio.log"; Type: files
+
 [UninstallDelete]
 Name: "{commonappdata}\PulseAudio"; Type: filesandordirs
 
