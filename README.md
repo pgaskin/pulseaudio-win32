@@ -32,72 +32,9 @@ tar -xOf - --wildcards '*/layer.tar' |
 tar -xvf - -C ./build
 ```
 
-### Troubleshooting
+### Usage
 
-- **Service**
-  - **Error: The process terminated unexpectedly**<br>
-    Check PulseAudio's log. Note that it gets truncated every time PulseAudio
-    starts.
-  - **Error: The environment is incorrect**<br>
-    Something went wrong when finding the AppData folder. This error shouldn't
-    happen.
-  - **Error: The specified service has been marked for deletion**<br>
-    If you have `services.msc` open, close it and try again (it prevents service
-    deletions from working properly). Otherwise, try killing `pulseaudio.exe`
-    and `pasvc.exe`.
-  - **Permission errors for ProgramData**<br>
-    If you attempted to run pulseaudio with the `--system` option manually or
-    otherwise created conflicting files in ProgramData, delete them and start
-    the service again.
-  - **Invalid argument errors when attempting to create the Unix socket for the system service**
-    This is caused by file permission errors when PulseAudio cannot delete or
-    write to the socket file or the directory it's in. Try deleting the
-    ProgramData folder for PulseAudio and restarting the service.
-- **Installer**
-  - **The service does not get installed and/or started**
-    Try installing it manually from the command line with `pasvc install`.
-  - **The firewall rules do not get installed**
-    Try installing it manually from the command line with `pasvcfw install`.
-- **PulseAudio**
-  - **Error: cannot create wakeup pipe**<br>
-    If you are starting `pulseaudio.exe` from another process, ensure the
-    `SystemRoot` environment variable is defined.
-  - **Audio is much louder than other apps at the same volume level or is distorted even when relatively quiet**
-    Try disabling audio effects on the output devices. Dolby Audio (e.g. the one
-    preloaded on many devices) can cause this to happen if it is enabled even if
-    all individual effects are turned off.
-
-### Silent installation
-
-The installer uses Inno Setup 6 and supports the usual flags (e.g. `/SILENT`,
-`/VERYSILENT`).
-
-The following components are available (all are selected by default) and can be
-passed as a comma separated list to `/COMPONENTS=`:
-
-- `pulseaudio` (required) - PulseAudio daemon, modules, and tools
-- `documentation` - HTML documentation.
-- `service` - Windows Service.
-- `uninstall` - Uninstallation support.
-
-The following tasks are available when the `service` component is selected and
-can be passed as a comma separated list to `/TASKS=`:
-
-- `firewall` - Add a firewall rule (4713/tcp).
-  - `firewall/deny` - Deny all external connections.
-  - `firewall/allow` - Allow external connections on private networks.
-  - `firewall/allowall` - Allow all external connections.
-  - `firewall/allowalledge` - Allow all external connections including edge
-    traversal.
-- `svcmodload` - Allow loading additional modules (note that this is a potential
-  security risk).
-
-The included configuration files in the installation directory will be
-overwritten on install and deleted on uninstall. To preserve your changes, place
-your custom configuration files in `*.pa.d\*.pa` and `*.conf.d\*.conf`.
-
-Uninstalling will remove everything except for custom configuration files in the
-aforementioned folders.
+See the [website](https://pgaskin.net/pulseaudio-win32/#readme).
 
 ### Notes
 
