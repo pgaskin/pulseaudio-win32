@@ -78,7 +78,7 @@ passed as a comma separated list to `/COMPONENTS=`:
 - `pulseaudio` (required) - PulseAudio daemon, modules, and tools
 - `documentation` - HTML documentation.
 - `service` - Windows Service.
-- `uninstaller` - Uninstallation support.
+- `uninstall` - Uninstallation support.
 
 The following tasks are available when the `service` component is selected and
 can be passed as a comma separated list to `/TASKS=`:
@@ -96,8 +96,8 @@ The included configuration files in the installation directory will be
 overwritten on install and deleted on uninstall. To preserve your changes, place
 your custom configuration files in `*.pa.d\*.pa` and `*.conf.d\*.conf`.
 
-Uninstalling will remove everything except for the log and state data for the
-service if used.
+Uninstalling will remove everything except for custom configuration files in the
+aforementioned folders.
 
 ### Notes
 
