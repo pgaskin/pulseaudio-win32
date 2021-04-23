@@ -47,6 +47,7 @@ Name: "{app}\etc\pulse\default.pa.d"
 Name: "{app}\etc\pulse\system.pa.d"
 Name: "{app}\etc\pulse\daemon.conf.d"
 Name: "{app}\etc\pulse\client.conf.d"
+Name: "{commonappdata}\PulseAudio"; Permissions: service-full
 
 [UninstallDelete]
 Name: "{commonappdata}\PulseAudio"; Type: filesandordirs
