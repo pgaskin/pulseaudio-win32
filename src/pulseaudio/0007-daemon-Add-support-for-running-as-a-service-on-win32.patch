@@ -1,6 +1,6 @@
-From 3e25facff7148884202518d75f684386e4a8527c Mon Sep 17 00:00:00 2001
+From 3f87672fa8a274b6d332a963528f4aa08bc93492 Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
-Date: Thu, 22 Apr 2021 08:05:10 -0400
+Date: Sat, 8 May 2021 18:43:03 -0400
 Subject: [PATCH] daemon: Add support for running as a service on win32
 
 * Minimal implementation of --system on win32.
@@ -10,14 +10,14 @@ Subject: [PATCH] daemon: Add support for running as a service on win32
   on Windows (overrides the build config, similar to the existing
   config path replacement logic).
 ---
- src/daemon/main.c         | 125 +++++++++++++++++++++++++++++++++++++-
- src/pulse/context.c       |   7 +++
+ src/daemon/main.c         | 134 +++++++++++++++++++++++++++++++++++++-
+ src/pulse/context.c       |   7 ++
  src/pulsecore/core-util.c |  10 +++
  src/pulsecore/core-util.h |   1 +
- 4 files changed, 141 insertions(+), 2 deletions(-)
+ 4 files changed, 151 insertions(+), 1 deletion(-)
 
 diff --git a/src/daemon/main.c b/src/daemon/main.c
-index a424d9ef9..e259b3704 100644
+index a424d9ef9..ec1ec3cac 100644
 --- a/src/daemon/main.c
 +++ b/src/daemon/main.c
 @@ -60,6 +60,10 @@
@@ -31,7 +31,7 @@ index a424d9ef9..e259b3704 100644
  #include <pulse/client-conf.h>
  #include <pulse/mainloop.h>
  #include <pulse/mainloop-signal.h>
-@@ -156,7 +160,33 @@ static void signal_callback(pa_mainloop_api* m, pa_signal_event *e, int sig, voi
+@@ -156,7 +160,44 @@ static void signal_callback(pa_mainloop_api* m, pa_signal_event *e, int sig, voi
      }
  }
  
@@ -42,10 +42,21 @@ index a424d9ef9..e259b3704 100644
 +static int change_user(void) {
 +    pa_log_info("Overriding system runtime/config base dir to '%s'.", pa_win32_get_system_appdata());
 +
++    /* On other platforms, these paths are compiled into PulseAudio. This isn't
++     * suitable on Windows. Firstly, Windows doesn't follow the FHS or use Unix
++     * paths and the build system can't handle Windows-style paths properly.
++     * Secondly, the idiomatic location for a service's state and shared data is
++     * ProgramData, and the location of special folders is dynamic on Windows.
++     * Also, this method of handling paths is consistent with how they are
++     * handled on Windows in other parts of PA. Note that this is only needed
++     * in system-wide mode since paths in user instances are already handled
++     * properly.
++     */
++
 +    char *run_path = pa_sprintf_malloc("%s" PA_PATH_SEP "run", pa_win32_get_system_appdata());
 +    char *lib_path = pa_sprintf_malloc("%s" PA_PATH_SEP "lib", pa_win32_get_system_appdata());
 +
-+    // TODO: figure out dir ACLs
++    /* TODO: directory ACLs */
 +
 +    pa_set_env("HOME", run_path);
 +    if (!getenv("PULSE_RUNTIME_PATH"))
@@ -58,7 +69,7 @@ index a424d9ef9..e259b3704 100644
 +    pa_xfree(run_path);
 +    pa_xfree(lib_path);
 +
-+    pa_log_info("Not changing user for system instance on Windows."); // TODO: maybe drop privileges, figure out pulse paths
++    pa_log_info("Not changing user for system instance on Windows.");
 +    return 0;
 +}
 +
@@ -66,11 +77,10 @@ index a424d9ef9..e259b3704 100644
  
  static int change_user(void) {
      struct passwd *pw;
-@@ -377,7 +407,45 @@ fail:
+@@ -377,7 +418,45 @@ fail:
  }
  #endif
  
--int main(int argc, char *argv[]) {
 +#ifdef OS_IS_WIN32
 +#define SVC_NAME "PulseAudio"
 +static bool is_svc = true;
@@ -108,12 +118,12 @@ index a424d9ef9..e259b3704 100644
 +
 +static int real_main(int s_argc, char *s_argv[]) {
 +#else
-+int main(int s_argc, char *s_argv[]) {
+ int main(int argc, char *argv[]) {
 +#endif
      pa_core *c = NULL;
      pa_strbuf *buf = NULL;
      pa_daemon_conf *conf = NULL;
-@@ -402,6 +470,23 @@ int main(int argc, char *argv[]) {
+@@ -402,6 +481,23 @@ int main(int argc, char *argv[]) {
      bool start_server;
  #endif
  
@@ -137,7 +147,7 @@ index a424d9ef9..e259b3704 100644
      pa_log_set_ident("pulseaudio");
      pa_log_set_level(PA_LOG_NOTICE);
      pa_log_set_flags(PA_LOG_COLORS|PA_LOG_PRINT_FILE|PA_LOG_PRINT_LEVEL, PA_LOG_RESET);
-@@ -1172,6 +1257,18 @@ int main(int argc, char *argv[]) {
+@@ -1172,6 +1268,18 @@ int main(int argc, char *argv[]) {
      sd_notify(0, "READY=1");
  #endif
  
@@ -156,7 +166,7 @@ index a424d9ef9..e259b3704 100644
      retval = 0;
      if (pa_mainloop_run(mainloop, &retval) < 0)
          goto finish;
-@@ -1182,6 +1279,18 @@ int main(int argc, char *argv[]) {
+@@ -1182,6 +1290,18 @@ int main(int argc, char *argv[]) {
      sd_notify(0, "STOPPING=1");
  #endif
  
@@ -175,7 +185,7 @@ index a424d9ef9..e259b3704 100644
  finish:
  #ifdef HAVE_DBUS
      if (server_bus)
-@@ -1249,5 +1358,17 @@ finish:
+@@ -1249,5 +1369,17 @@ finish:
      dbus_shutdown();
  #endif
  
@@ -253,5 +263,5 @@ index ed123c796..a69d53be8 100644
  
  size_t pa_page_size(void);
 -- 
-2.31.0
+2.31.1
 

@@ -1,4 +1,4 @@
-From d824d639ad5c986f4abae72cb25e0b506f14a9b5 Mon Sep 17 00:00:00 2001
+From ab69173395cb13461ecb1611998384d85f0c4159 Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Thu, 22 Apr 2021 08:11:11 -0400
 Subject: [PATCH] system.pa: Tweaks for custom build with unix sockets
@@ -22,5 +22,5 @@ index d3512005a..c55df5bb2 100755
  load-module module-native-protocol-tcp auth-anonymous=1
  
 -- 
-2.31.0
+2.31.1
 

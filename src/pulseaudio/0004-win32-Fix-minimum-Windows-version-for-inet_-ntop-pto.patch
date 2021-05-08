@@ -1,4 +1,4 @@
-From 375b3fa548c9deb7fe20fa5203cb28c800872100 Mon Sep 17 00:00:00 2001
+From 25aa59912cbb7e1600c40e29e75dffbe96e13841 Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Wed, 21 Apr 2021 15:05:48 -0400
 Subject: [PATCH] win32: Fix minimum Windows version for inet_{ntop,pton}
@@ -36,5 +36,5 @@ index a3bc840e6..19f3be899 100644
  const char *inet_ntop(int af, const void *src, char *dst, socklen_t cnt);
  
 -- 
-2.31.0
+2.31.1
 

@@ -1,4 +1,4 @@
-From 1047ec42ae2753f72cf408becac4e06adf98dc68 Mon Sep 17 00:00:00 2001
+From 8127586558162bd5a7b1bcf9ed2bd6fbf1098aa2 Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Thu, 31 Dec 2020 06:38:28 -0500
 Subject: [PATCH] client-conf: Enable auto-connect-localhost by default
@@ -49,5 +49,5 @@ index 26b7790aa..ee85808d1 100644
 +; auto-connect-localhost = yes
  ; auto-connect-display = no
 -- 
-2.31.0
+2.31.1
 

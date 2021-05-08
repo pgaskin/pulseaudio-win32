@@ -1,4 +1,4 @@
-From 4c95f48ef0b43a8f70165c6c44395eb3865b1ee9 Mon Sep 17 00:00:00 2001
+From 2ec60f8971f5384b423dfc7aaaf0925e627a0061 Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Thu, 22 Apr 2021 08:08:58 -0400
 Subject: [PATCH] win32: Misc Unix socket fixes
@@ -58,5 +58,5 @@ index 83d4c9c6c..f2c8c3c31 100644
  #endif
      } else
 -- 
-2.31.0
+2.31.1
 

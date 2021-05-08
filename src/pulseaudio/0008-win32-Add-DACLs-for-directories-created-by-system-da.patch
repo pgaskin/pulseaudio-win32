@@ -1,6 +1,6 @@
-From b6106897343dead65d7b596ec2085591ca65e7ce Mon Sep 17 00:00:00 2001
+From e486ad3ba73f43c9ff691265b0d8ceac9e9b99ce Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
-Date: Thu, 22 Apr 2021 22:41:18 -0400
+Date: Sat, 8 May 2021 18:45:36 -0400
 Subject: [PATCH] win32: Add DACLs for directories created by system daemon
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] win32: Add DACLs for directories created by system daemon
  1 file changed, 54 insertions(+), 1 deletion(-)
 
 diff --git a/src/daemon/main.c b/src/daemon/main.c
-index e259b3704..cd16b364f 100644
+index ec1ec3cac..924a4d4aa 100644
 --- a/src/daemon/main.c
 +++ b/src/daemon/main.c
 @@ -62,6 +62,8 @@
@@ -20,11 +20,11 @@ index e259b3704..cd16b364f 100644
  #endif
  
  #include <pulse/client-conf.h>
-@@ -169,7 +171,58 @@ static int change_user(void) {
+@@ -180,7 +182,58 @@ static int change_user(void) {
      char *run_path = pa_sprintf_malloc("%s" PA_PATH_SEP "run", pa_win32_get_system_appdata());
      char *lib_path = pa_sprintf_malloc("%s" PA_PATH_SEP "lib", pa_win32_get_system_appdata());
  
--    // TODO: figure out dir ACLs
+-    /* TODO: directory ACLs */
 +    /* https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings */
 +    /* https://docs.microsoft.com/en-us/windows/win32/secauthz/modifying-the-acls-of-an-object-in-c-- */
 +    /* https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsecuritydescriptortosecuritydescriptora */
@@ -81,5 +81,5 @@ index e259b3704..cd16b364f 100644
      pa_set_env("HOME", run_path);
      if (!getenv("PULSE_RUNTIME_PATH"))
 -- 
-2.31.0
+2.31.1
 
