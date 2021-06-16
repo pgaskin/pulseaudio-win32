@@ -10,8 +10,8 @@ RUN zypper --non-interactive install \
 RUN mkdir -p /usr/local/share/meson/cross && \
     wget -qO /usr/local/share/meson/cross/mingw32 https://raw.githubusercontent.com/mesonbuild/meson/ca30550e065991f9b2438e2a6fabc64fd2248806/cross/linux-mingw-w64-32bit.txt
 
-FROM alpine AS inkscape
-RUN apk add --no-cache inkscape imagemagick xvfb
+FROM alpine AS imgstuff
+RUN apk add --no-cache librsvg imagemagick
 
 # in alpine 3.14, wine 6.0 doesn't start for some reason
 FROM i386/alpine:3.13 AS wine
@@ -64,20 +64,17 @@ COPY --from=inno-install ${WINEPREFIX} ${WINEPREFIX}
 
 ### Icon ###
 
-FROM inkscape AS build-icon
+FROM imgstuff AS build-icon
 COPY ./icon/* /src/
 RUN set -x; \
-    export DISPLAY=:0; \
-    Xvfb :0 -screen 0 1024x768x16 & until xmodmap -display :0 &> /dev/null; do sleep .1; done && \
     mkdir -p /build && \
-    inkscape -w 16  -h 16  --export-filename=/build/pulseaudio-flat.16.png /src/pulseaudio-flat-simple.svg && \
-    inkscape -w 32  -h 32  --export-filename=/build/pulseaudio-flat.32.png /src/pulseaudio-flat-simple.svg && \
-    inkscape -w 48  -h 48  --export-filename=/build/pulseaudio-flat.48.png /src/pulseaudio-flat-simple.svg && \
-    inkscape -w 64  -h 64  --export-filename=/build/pulseaudio-flat.64.png /src/pulseaudio-flat.svg && \
-    inkscape -w 96  -h 96  --export-filename=/build/pulseaudio-flat.96.png /src/pulseaudio-flat.svg && \
-    inkscape -w 128 -h 128 --export-filename=/build/pulseaudio-flat.96.png /src/pulseaudio-flat.svg && \
-    convert /build/pulseaudio-flat.*.png /pulseaudio.ico && \
-    pkill Xvfb && while pkill -0 Xvfb &> /dev/null; do sleep .1; done
+    rsvg-convert -w 16  -h 16  /src/pulseaudio-flat-simple.svg > /build/pulseaudio-flat.16.png && \
+    rsvg-convert -w 32  -h 32  /src/pulseaudio-flat-simple.svg > /build/pulseaudio-flat.32.png && \
+    rsvg-convert -w 48  -h 48  /src/pulseaudio-flat-simple.svg > /build/pulseaudio-flat.48.png && \
+    rsvg-convert -w 64  -h 64  /src/pulseaudio-flat.svg > /build/pulseaudio-flat.64.png && \
+    rsvg-convert -w 96  -h 96  /src/pulseaudio-flat.svg > /build/pulseaudio-flat.96.png && \
+    rsvg-convert -w 128 -h 128 /src/pulseaudio-flat.svg > /build/pulseaudio-flat.128.png && \
+    convert /build/pulseaudio-flat.*.png /pulseaudio.ico
 
 ### PulseAudio ###
 
