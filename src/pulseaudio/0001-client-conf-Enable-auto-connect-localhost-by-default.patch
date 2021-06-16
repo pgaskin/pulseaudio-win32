@@ -1,4 +1,4 @@
-From 8127586558162bd5a7b1bcf9ed2bd6fbf1098aa2 Mon Sep 17 00:00:00 2001
+From 7a058556c96f59104ca8a87b2cea12c1ed653522 Mon Sep 17 00:00:00 2001
 From: Patrick Gaskin <patrick@pgaskin.net>
 Date: Thu, 31 Dec 2020 06:38:28 -0500
 Subject: [PATCH] client-conf: Enable auto-connect-localhost by default
