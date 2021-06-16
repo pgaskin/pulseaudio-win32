@@ -45,22 +45,18 @@ RUN touch /bin/ResourceHacker && \
 COPY --from=reshack-install ${WINEPREFIX} ${WINEPREFIX}
 
 FROM wine AS inno-install
+RUN apk add --no-cache innoextract
 RUN wget -qO /tmp/is.exe http://files.jrsoftware.org/is/6/innosetup-6.1.2.exe
-RUN set -x; \
-    export DISPLAY=:0; \
-    Xvfb :0 -screen 0 1024x768x16 & until xmodmap -display :0 &> /dev/null; do sleep .1; done && \
-    wineboot --init && \
-    wine "Z:\\tmp\\is.exe" /SP- /VERYSILENT /ALLUSERS /SUPPRESSMSGBOXES && \
-    wineboot --shutdown && \
-    pkill Xvfb && while pkill -0 Xvfb &> /dev/null; do sleep .1; done
+RUN mkdir /opt/inno-setup && \
+    innoextract --output-dir /opt/inno-setup --exclude-temp /tmp/is.exe
 
 FROM wine AS inno
 RUN touch /bin/iscc && \
     chmod +x /bin/iscc && \
     echo '#!/bin/sh' >> /bin/iscc && \
-    echo 'wine "C:\\Program Files\\Inno Setup 6\\ISCC.exe" "$@"' >> /bin/iscc && \
+    echo 'wine /opt/inno-setup/app/ISCC.exe "$@"' >> /bin/iscc && \
     echo 'exit $?' >> /bin/iscc
-COPY --from=inno-install ${WINEPREFIX} ${WINEPREFIX}
+COPY --from=inno-install /opt/inno-setup /opt/inno-setup
 
 ### Icon ###
 
