@@ -13,7 +13,8 @@ RUN mkdir -p /usr/local/share/meson/cross && \
 FROM alpine AS inkscape
 RUN apk add --no-cache inkscape imagemagick xvfb
 
-FROM i386/alpine AS wine
+# in alpine 3.14, wine 6.0 doesn't start for some reason
+FROM i386/alpine:3.13 AS wine
 ENV WINEDEBUG="-all" \
     WINEDLLOVERRIDES="mscoree,mshtml=" \
     WINEARCH="win32" \
