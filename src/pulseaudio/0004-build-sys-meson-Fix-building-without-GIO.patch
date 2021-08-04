@@ -1,0 +1,28 @@
+From 74469f4b25ad5d31be01b3c721da4a580f876de8 Mon Sep 17 00:00:00 2001
+From: Patrick Gaskin <patrick@pgaskin.net>
+Date: Wed, 4 Aug 2021 04:44:23 -0400
+Subject: [PATCH] build-sys: meson: Fix building without GIO
+
+GIO is only needed for GSettings and GStreamer.
+
+Fixes a regression in 58052e0e04ee1b5fdb1027ebc19717e7766825ec.
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index d7e468cab..dfc184679 100644
+--- a/meson.build
++++ b/meson.build
+@@ -614,7 +614,7 @@ if dbus_dep.found()
+   cdata.set('HAVE_DBUS', 1)
+ endif
+ 
+-gio_dep = dependency('gio-2.0', version : '>= 2.26.0')
++gio_dep = dependency('gio-2.0', version : '>= 2.26.0', required: false) # checked later on where needed by gsettings and gstreamer
+ if get_option('gsettings').enabled()
+   assert(gio_dep.found(), 'GSettings support needs glib I/O library (GIO)')
+   cdata.set('HAVE_GSETTINGS', 1)
+-- 
+2.31.1
+

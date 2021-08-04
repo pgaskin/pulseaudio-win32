@@ -4,7 +4,7 @@ FROM opensuse/tumbleweed AS mingw32
 RUN zypper --non-interactive addrepo https://download.opensuse.org/repositories/windows:mingw:win32/openSUSE_Tumbleweed/windows:mingw:win32.repo && \
     zypper --non-interactive --gpg-auto-import-keys refresh
 RUN zypper --non-interactive install \
-        wget m4 git-core meson bsdtar gzip xmlstarlet \
+        wget m4 git-core meson bsdtar gzip xmlstarlet findutils \
         mingw32-filesystem mingw32-cross-gcc mingw32-cross-gcc-c++ mingw32-cross-binutils mingw32-cross-pkgconf && \
     zypper clean
 RUN mkdir -p /usr/local/share/meson/cross && \
@@ -83,7 +83,7 @@ RUN mkdir -p /src
 RUN git init /src/pulseaudio && \
     git -C /src/pulseaudio remote add origin https://gitlab.freedesktop.org/pulseaudio/pulseaudio.git && \
     git -C /src/pulseaudio fetch origin && \
-    git -C /src/pulseaudio checkout ce962563eba7ee18ad4641f700d097adbea6b6d7
+    git -C /src/pulseaudio checkout 6329a2498eb038f8a9537888280a62b00a93f68e
 COPY ./pulseaudio/* /src/
 RUN git -C /src/pulseaudio apply /src/*.patch
 ARG PAW32_VERSION=unknown
@@ -94,11 +94,12 @@ RUN meson setup \
         --cross-file mingw32 \
         -Dtests=false \
         -Ddatabase=simple \
+        -Ddoxygen=false \
         -Drunning-from-build-tree=false \
         -Dlegacy-database-entry-format=false \
         -Dprefix=/pulseaudio \
         -Dmodlibexecdir=/pulseaudio/bin \
-        -Dbluez5=false \
+        -Dbluez5=disabled \
         # _WIN32_WINNT=_WIN32_WINNT_WIN7
         -Dc_args="-D__USE_MINGW_ANSI_STDIO=1 -D_WIN32_WINNT=0x0601" \
         /build/pulseaudio /src/pulseaudio
